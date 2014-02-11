@@ -17,7 +17,10 @@ app.get('/', function(request, response) {
 });
 
 app.get('/users', function(request, response) {
-	response.render('users', {title:"Users", users: state.getAllUsers()});
+	dbManager.getAllUsers(function(result) {
+		response.render('users', {title:"Users", users: result });
+	});
+	
 });
 
 app.listen(8625);
