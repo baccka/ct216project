@@ -1,7 +1,13 @@
-<h1>Hello World!</h1>
+<html>
+	<body>
+		<h1>T5 Messenger</h1>
+		
+		<p id="demo">Registeration Form</p>
 
-{{#each messages}}
-<p>
-Time accessed: {{time}}
-</p>
-{{/each}}
+		<form name="input" action="register" method="post">
+			Username: <input type="text"     name="user">
+			Password: <input type="password" name="pwd">
+			<input type="submit" value="Submit">
+		</form>
+	</body>
+</html>

@@ -23,4 +23,13 @@ app.get('/users', function(request, response) {
 	
 });
 
+app.post('/register', express.bodyParser(), function(req, res) {
+    console.log("Calling /register", req.body.user, ":", req.body.pwd);
+    dbManager.registerUser(req.body.user, req.body.pwd, function(result){
+    	res.sendfile('./views/registerok.html');
+});
+
+});
+
+
 app.listen(8625);
