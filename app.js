@@ -16,4 +16,8 @@ app.get('/', function(request, response) {
   response.render('index', {title:"Hello", messages: state.getMessages()});
 });
 
+app.get('/users', function(request, response) {
+	response.render('users', {title:"Users", users: state.getAllUsers()});
+});
+
 app.listen(8625);
