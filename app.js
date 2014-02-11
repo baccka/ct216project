@@ -23,6 +23,10 @@ app.get('/users', function(request, response) {
 	
 });
 
+app.get('/registration', function(req, res) {
+	res.sendfile('./views/registration.html');
+});
+
 app.post('/register', express.bodyParser(), function(req, res) {
     console.log("Calling /register", req.body.user, ":", req.body.pwd);
     dbManager.registerUser(req.body.user, req.body.pwd, function(result){

@@ -43,6 +43,20 @@ DBManager.prototype.registerUser = function(username, password, callback) {
 	userID += 1;
 }
 
+// This function tries to login a user
+DBManager.prototype.login = function(username, password, callback) {
+	var queryString = 'SELECT * FROM User WHERE UserName = "' + username + '";'
+	this.connection.query(queryString, function(err, results, fields) {
+		if(err) throw err;
+		
+		if(results == null || results.length == 0 ||
+		   results[0].Password != password)
+			callback(null);
+		else
+			callback(results[0]);
+	});
+}
+
 exports.addMessage = function(t) {
         // comments
 	array.push({ time: t });
