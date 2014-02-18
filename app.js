@@ -8,12 +8,20 @@ var state = require('./state');
 app.set('view engine', 'html');
 app.engine('html', hbs.__express);
 app.use(express.bodyParser());
+app.use(express.cookieParser());
+app.use(express.session({secret: '1234567890QWERTY'}));
 
 var dbManager = state.createDBManager();
 
+function renderMessagingView(request, response) {
+	response.render('messaging', {user: request.session.user});
+}
+
 app.get('/', function(request, response) {
-  state.addMessage(new Date());
-  response.render('index', {title:"Hello", messages: state.getMessages()});
+  if(request.session.user)
+	renderMessagingView(request, response);
+  else
+	response.sendfile('./views/index.html');
 });
 
 app.get('/users', function(request, response) {
@@ -21,6 +29,12 @@ app.get('/users', function(request, response) {
 		response.render('users', {title:"Users", users: result });
 	});
 	
+});
+
+app.get('/logout', function(req, res) {
+	if(req.session.user)
+		req.session.user = null;
+	res.sendfile('./views/index.html');
 });
 
 app.get('/registration', function(req, res) {
@@ -39,9 +53,11 @@ app.post('/login', express.bodyParser(), function(req, res) {
     console.log("Calling /login", req.body.user, ":", req.body.pwd);
     dbManager.login(req.body.user, req.body.pwd, function(result){
     	if(result == null)
-			res.send('Fail');
-		else
-			res.send('Ok');
+			res.sendfile('./views/badlogin.html');
+		else {
+			req.session.user = req.body.user;
+			renderMessagingView(req, res);
+		}
 	});
 });
 
