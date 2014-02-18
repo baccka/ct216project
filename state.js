@@ -24,6 +24,15 @@ DBManager.prototype.closeConnection = function() {
 	this.connection.end();
 }
 
+DBManager.prototype.getAllUsers = function(callback) {
+	var queryString = 'SELECT * FROM User;';
+	this.connection.query(queryString, function(err, results, fields) {
+		if(err) throw err;
+
+		callback(results);
+	});
+}
+
 DBManager.prototype.findUserID = function() {
 	var queryString = 'SELECT COUNT(*) AS Number FROM User;';
 	this.connection.query(queryString, function(err, results, fields) {

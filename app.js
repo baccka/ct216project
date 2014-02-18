@@ -35,4 +35,14 @@ app.post('/register', express.bodyParser(), function(req, res) {
 
 });
 
+app.post('/login', express.bodyParser(), function(req, res) {
+    console.log("Calling /login", req.body.user, ":", req.body.pwd);
+    dbManager.login(req.body.user, req.body.pwd, function(result){
+    	if(result == null)
+			res.send('Fail');
+		else
+			res.send('Ok');
+	});
+});
+
 app.listen(8625);
