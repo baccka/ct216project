@@ -1,8 +1,47 @@
 <html>
+	<head>
+		<script type="text/javascript" src="js/socket.io.js"></script>
+	</head>
 	<body>
 		<h1>T5 Messenger</h1>
 		
 		<p> Welcome {{user}}! <a href="logout">Logout</a> </p>
-		<p> Here will be the chat! </p>
+		<p id="demo"> Chat away: </p>
+		Say something: <input type="text" id="messageText" name="msg">
+		<input type="submit" id="sendButton" value="Send">
+		
+		<script>
+			var socket = io.connect('http://localhost:8625');
+			
+			document.getElementById("sendButton").addEventListener('click', function() {
+				sendMessage(document.getElementById("messageText").value);
+			});
+			
+			function renderMessage(msg) {
+				var date = new Date(msg.time);
+				// hours part from the timestamp
+				var hours = date.getHours();
+				// minutes part from the timestamp
+				var minutes = date.getMinutes();
+
+				// will display time in 10:30 format
+				var formattedTime = hours + ':' + (minutes < 10? '0' + minutes : minutes);
+				var result;
+				if(!msg.sender)
+					result = "<p><b>"+formattedTime+"</b> <span style='color:red;'>"+msg.text+"</span></p>";
+				else
+					result = "<p><b>"+formattedTime+"</b> <i>"+msg.sender+"</i>: "+msg.text+"</p>";
+				document.getElementById("demo").innerHTML += result;
+			}
+			
+			function sendMessage(msg) {
+				socket.emit('message', {text: msg});
+				renderMessage({time: new Date().getTime(), sender: '{{user}}', text: msg});
+			}
+			
+    		socket.on('message', function(data){
+    			renderMessage(data);
+    		});
+		</script>
 	</body>
 </html>

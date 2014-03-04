@@ -45,13 +45,27 @@ DBManager.prototype.findUserID = function() {
 
 // This function registers a new user
 DBManager.prototype.registerUser = function(username, password, callback) {
-	var queryString = 'INSERT INTO User VALUES (' + userID + ',"' + username + '", "' + password + '")';
-	this.connection.query(queryString, function(err, results, fields) {
+	//user tries to create a profile with a used username
+	var self = this;
+	var uniqueLogin = 'SELECT * FROM User WHERE UserName = ("'+username+'")';
+	this.connection.query(uniqueLogin, function(err, results, fields){
 		if(err) throw err;
+		console.log(results);
+		if(results.length == 0){
+
+			//inputs user into the database
+			var queryString = 'INSERT INTO User VALUES (' + userID + ',"' + username + '", "' + password + '")';
+			self.connection.query(queryString, function(err, results, fields) {
+			if(err) throw err;
+			userID += 1;
+			callback(results);
+		});
 		
-		callback(results);
+
+		}
+		else
+			callback(null);
 	});
-	userID += 1;
 }
 
 // This function tries to login a user
