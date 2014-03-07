@@ -1,20 +1,52 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<script type="text/javascript" src="js/socket.io.js"></script>
+		
+		<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
 	</head>
 	<body>
+		<div class="container">
 		<h1>T5 Messenger</h1>
 		
-		<p> Welcome {{user}}! <a href="logout">Logout</a> </p>
-		<p id="demo"> Chat away: </p>
-		Say something: <input type="text" id="messageText" name="msg">
-		<input type="submit" id="sendButton" value="Send">
+		<div class="row">
+			<div class="col-xs-11 col-xs-offset-1">
+				<p>Welcome back {{user}}! <a href="logout">Logout</a> </p>
+			</div>
+		</div>
 		
+		<div id="messages">		
+		</div>
+		
+		<div class="row">
+		<div class="col-sm-4 col-xs-offset-1">
+		<div class="input-group">
+			<input class="form-control" type="text" id="messageText" name="msg" placeholder="say something..">
+			<span class="input-group-btn">
+				<button class="btn btn-primary" type="button" id="sendButton">Send</button>	
+			</span>
+		</div>
+		</div>
+		</div>
+		
+		</div>
+		
+		    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
 		<script>
 			var socket = io.connect('http://localhost:8625');
 			
-			document.getElementById("sendButton").addEventListener('click', function() {
-				sendMessage(document.getElementById("messageText").value);
+			$("#sendButton").click(function() {
+				sendMessage($("#messageText").val());
+				$("#messageText").val("");
 			});
 			
 			function renderMessage(msg) {
@@ -27,11 +59,15 @@
 				// will display time in 10:30 format
 				var formattedTime = hours + ':' + (minutes < 10? '0' + minutes : minutes);
 				var result;
-				if(!msg.sender)
-					result = "<p><b>"+formattedTime+"</b> <span style='color:red;'>"+msg.text+"</span></p>";
-				else
-					result = "<p><b>"+formattedTime+"</b> <i>"+msg.sender+"</i>: "+msg.text+"</p>";
-				document.getElementById("demo").innerHTML += result;
+				result = '<div class="row"><div class="col-xs-1">';
+				result+='<b>'+formattedTime+'</b>';
+				result+='</div><div class="col-xs-11"><p>';
+				if(msg.sender) {
+					 result+='<b class="text-primary">'+msg.sender+'</b><br>';
+				 }
+				result += msg.text+'</p></div></div>';
+				
+				$("#messages").append(result);
 			}
 			
 			function sendMessage(msg) {

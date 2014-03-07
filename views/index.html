@@ -1,14 +1,37 @@
+<!DOCTYPE html>
 <html>
-	<body>
-		<h1>T5 Messenger</h1>
-		
-		<p id="demo"> Welcome! please login: </p>
+	<head>
+			<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
-		<form name="input" action="login" method="post">
-			Username: <input type="text"     name="user">
-			Password: <input type="password" name="pwd">
-			<input type="submit" value="Login">
+<!-- Latest compiled and minified JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+		<h1>T5 Messenger</h1>
+
+		<form name="input" action="login" method="post" class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="col-xs-1 control-label" for="inputEmail">Username</label>
+				<div class="col-xs-4"><input type="text" class="form-control" name="user" placeholder="Username"></div>
+			</div>
+			<div class="form-group">
+				<label class="col-xs-1 control-label" for="inputPwd">Password</label>
+				<div class="col-xs-4"><input type="password" class="form-control" name="pwd" placeholder="Password"></div>
+			</div>
+			<div class="form-group">
+				<div class="col-xs-offset-1 col-xs-11">
+					<input type="submit" class="btn btn-primary" value="Login">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-xs-offset-1 col-xs-11">
+					<p> If you don't have an account, you can <a href="registration">register here</a></p>
+				</div>
+			</div>
 		</form> 
-		<p> If you dont have an account,you can <a href="registration">register here</a></p>
+		
+		</div>
 	</body>
 </html>

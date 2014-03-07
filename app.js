@@ -15,7 +15,7 @@ var cookieParser = express.cookieParser();
 var sessionStore = new express.session.MemoryStore();
 app.use(cookieParser);
 var sessionConfig = {
-	secret: '1234567890QWERTY', 
+	secret: '45w387y0398vnumtj[,x932*45ym', 
     store: sessionStore
 };
 app.use(express.session(sessionConfig));
@@ -23,13 +23,9 @@ app.use(express.static('./static'));
 
 var dbManager = state.createDBManager();
 
-function renderMessagingView(request, response) {
-	response.render('messaging', {user: request.session.user});
-}
-
 app.get('/', function(request, response) {
-  if(request.session.user)
-	renderMessagingView(request, response);
+  if(request.session.user) 
+	response.render('messaging', {user: request.session.user});
   else
 	response.sendfile('./views/index.html');
 });
@@ -52,7 +48,8 @@ app.get('/logout', function(req, res) {
 		req.session.destroy();
 		req.session = null;
 	}
-	res.sendfile('./views/index.html');
+	// Redirect to main page
+	res.redirect('');
 });
 
 app.get('/registration', function(req, res) {
@@ -78,7 +75,9 @@ app.post('/login', express.bodyParser(), function(req, res) {
 			res.sendfile('./views/badlogin.html');
 		else {
 			req.session.user = req.body.user;
-			renderMessagingView(req, res);
+			req.session.userID = result.UserID;
+			// Redirect to main page
+			res.redirect('');
 		}
 	});
 });
@@ -127,10 +126,24 @@ sio.set('authorization', function (data, callback) {
 sio.on('connection', function(client){
 	console.log('TEST>>> Client Connected...');
 	var session = client.handshake.session;
+	// send the message history
+	dbManager.getMessages(function(results) {
+		for(var i = 0; i < results.length; ++i) {
+			(function() {
+				var j = i;
+				dbManager.getUser(results[j].UserID, function(user) {
+					var msg = {time: results[j].TimeStamp.getTime(), sender: user.UserName, text: results[j].Message};
+					client.emit('message', msg);
+				});
+			})();
+		}
+	});
 	client.on('message', function (data) {
 		console.log(data);
-		var msg = {time: new Date().getTime(), sender: session.user, text: data.text};
+		var timestamp = new Date();
+		var msg = {time: timestamp.getTime(), sender: session.user, text: data.text};
 		client.broadcast.emit('message', msg);
+		dbManager.addMessage({time: timestamp, senderID: session.userID, text: msg.text});
 	});
 	client.on('disconnect', function() {
 		var msg = {time: new Date().getTime(), sender: null, text: session.user + ' disconnected!'};
