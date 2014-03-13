@@ -119,6 +119,7 @@ DBManager.prototype.login = function(username, password, callback) {
 	});
 }
 
+//function tries to find a user
 DBManager.prototype.getUser = function(userID, callback) {
 	this.connection.query('SELECT * FROM User WHERE UserID = ?', [userID], function(err, results, fields) {
 		if(err) throw err;
@@ -127,6 +128,7 @@ DBManager.prototype.getUser = function(userID, callback) {
 	});	
 }
 
+//function puts message into db
 DBManager.prototype.addMessage = function(msg) {
 	this.connection.query('INSERT INTO Messages SET ?', 
 	{MessageID: messageID, UserID: msg.senderID, Message: msg.text, TimeStamp: msg.time }, 
@@ -137,6 +139,7 @@ DBManager.prototype.addMessage = function(msg) {
 	});
 }
 
+//function gets all messages from db
 DBManager.prototype.getMessages = function(callback) {
 	this.connection.query('SELECT * FROM Messages', function(err, results, fields) {
 		if(err) throw err;

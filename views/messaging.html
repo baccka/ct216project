@@ -4,7 +4,7 @@
 		<script type="text/javascript" src="js/socket.io.js"></script>
 		
 		<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"> <!-- file for font size, colors etc... -->
 
 	</head>
 	<body>
@@ -13,19 +13,19 @@
 		
 		<div class="row">
 			<div class="col-xs-11 col-xs-offset-1">
-				<p>Welcome back {{user}}! <a href="logout">Logout</a> </p>
+				<p>Welcome back {{user}}! <a href="logout">Logout</a> </p> <!-- format page to display username and logout button-->
 			</div>
 		</div>
 		
-		<div id="messages">		
+		<div id="messages" style="height:200px;overflow-y:scroll;overflow-x: hidden;"> <!-- ??? -->	
 		</div>
 		
 		<div class="row">
 		<div class="col-sm-4 col-xs-offset-1">
 		<div class="input-group">
-			<input class="form-control" type="text" id="messageText" name="msg" placeholder="say something..">
+			<input class="form-control" type="text" id="messageText" name="msg" placeholder="say something.."> <!-- format page to display box to enter text to chat -->
 			<span class="input-group-btn">
-				<button class="btn btn-primary" type="button" id="sendButton">Send</button>	
+				<button class="btn btn-primary" type="button" id="sendButton">Send</button>	<!-- format page to display button to send text to chat-->
 			</span>
 		</div>
 		</div>
@@ -42,14 +42,34 @@
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
 		<script>
-			var socket = io.connect('http://localhost:8625');
+			var socket = io.connect('http://localhost:8625'); //localhost is your port number
 			
-			$("#sendButton").click(function() {
+			$(document).ready(function() {
+    var bodyheight = $(document).height();
+    $("#messages").height(bodyheight-180);//format chat box to be the window height - x
+});
+
+// for the window resize
+$(window).resize(function() {
+    var bodyheight = $(document).height();
+    $("#messages").height(bodyheight-180);
+});
+
+			$("#messageText").ready(function() {//function to (supposed to anyway...) send signal to send text to chat that is in text box
+ 				$('form input').keydown(function(event){
+    				if(event.keyCode == 13) {
+     					sendMessage($("#messageText").val());
+						$("#messageText").val("");
+    				}
+  				});
+			});
+			
+			$("#sendButton").click(function() {//function to receive the signal to send text to chat that is in text box
 				sendMessage($("#messageText").val());
 				$("#messageText").val("");
 			});
 			
-			function renderMessage(msg) {
+			function renderMessage(msg) {//function to render text on browser when you send and receive a message
 				var date = new Date(msg.time);
 				// hours part from the timestamp
 				var hours = date.getHours();
@@ -59,20 +79,21 @@
 				// will display time in 10:30 format
 				var formattedTime = hours + ':' + (minutes < 10? '0' + minutes : minutes);
 				var result;
-				result = '<div class="row"><div class="col-xs-1">';
+				result = '<div class="row"><div class="col-xs-1">';//render time to chat
 				result+='<b>'+formattedTime+'</b>';
 				result+='</div><div class="col-xs-11"><p>';
 				if(msg.sender) {
-					 result+='<b class="text-primary">'+msg.sender+'</b><br>';
+					 result+='<b class="text-primary">'+msg.sender+'</b><br>';//render the user who sent the message
 				 }
-				result += msg.text+'</p></div></div>';
+				result += msg.text+'</p></div></div>';//render text to chat
 				
 				$("#messages").append(result);
+				jQuery("#messages").scrollTop(jQuery("#messages")[0].scrollHeight);//function to scroll down to bottom of chat when user has entered a new message to chat box
 			}
 			
 			function sendMessage(msg) {
 				socket.emit('message', {text: msg});
-				renderMessage({time: new Date().getTime(), sender: '{{user}}', text: msg});
+				renderMessage({time: new Date().getTime(), sender: '{{user}}', text: msg});//function to send message to chat
 			}
 			
     		socket.on('message', function(data){
