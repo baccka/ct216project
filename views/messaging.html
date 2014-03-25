@@ -20,6 +20,13 @@
 		<div id="messages" style="height:200px;overflow-y:scroll;overflow-x: hidden; margin-bottom:10px"> <!-- ??? -->	
 		</div>
 		
+		 <div class="row" style="display:none;" id="typingBoxWrapper">
+            <div class="col-sm-12">
+                <div class=" well well-sm" id="typingBox">
+                </div>
+            </div>
+        </div>
+
 		<div class="row">
 		<div class="col-sm-4">
 		<div class="input-group">
@@ -56,6 +63,7 @@
 
 			$("#messageText").ready(function() {//function to (supposed to anyway...) send signal to send text to chat that is in text box
  				$('#messageText').keydown(function(event){
+ 					socket.emit("typing")
     				if(event.keyCode == 13) {
      					sendMessage($("#messageText").val());
 						$("#messageText").val("");
@@ -68,6 +76,8 @@
 				$("#messageText").val("");
 			});
 			
+
+
 			// Returns a string formatted as 'Month Day, Year'
 			function formatDate(date) {
 				var months = ["January","February","March","April","May","June","July","August","September","November","October","December"];
@@ -111,9 +121,44 @@
 				renderMessage({time: new Date().getTime(), sender: '{{user}}', text: msg});//function to send message to chat
 			}
 			
+
     		socket.on('message', function(data){
     			renderMessage(data);
     		});
+    		
+    		var userTyping = {}; 
+    		
+    		function renderTypingBox() {
+    		var result = "";
+    		var i = 0
+    		for(var user in userTyping){
+    			if (i != 0) result += ", ";
+    			result += user;
+				i++;
+    		}
+    		if (i == 0) {
+				$("#typingBoxWrapper").hide();
+				return;
+			}
+    		else if (i ==1) result += " is";
+    		else result += " are";
+    		result +=  " typing...";
+    		console.log(result);
+    			$("#typingBoxWrapper").show();
+    			$("#typingBox").html(result);				
+			}
+
+    		
+    		socket.on('isTyping', function(data){
+    			userTyping[data.user] = true;
+    			renderTypingBox();
+			});
+			
+			socket.on('stoppedTyping', function(data) {
+				if(userTyping[data.user]) delete userTyping[data.user];
+				renderTypingBox();
+			});
+
 		</script>
 	</body>
 </html>

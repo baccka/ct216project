@@ -142,11 +142,18 @@ sio.on('connection', function(client){
 		console.log(data);
 		var timestamp = new Date();
 		var msg = {time: timestamp.getTime(), sender: session.user, text: data.text};
+		client.broadcast.emit('stoppedTyping', {user: session.user});
 		client.broadcast.emit('message', msg);
 		dbManager.addMessage({time: timestamp, senderID: session.userID, text: msg.text});
 	});
 	client.on('disconnect', function() {//display user has disconnected
 		var msg = {time: new Date().getTime(), sender: null, text: session.user + ' disconnected!'};
 		client.broadcast.emit('message', msg);
+	});
+	client.on('typing', function() {
+		client.broadcast.emit('isTyping', {user: session.user});
+		/*setTimeout(function() {
+			client.broadcast.emit('stoppedTyping', {user: session.user});
+		}, 5000);*/
 	});
 });
