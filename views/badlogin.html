@@ -1,15 +1,42 @@
+<!DOCTYPE html>
 <html>
-        <body>
-                <h1>T5 Messenger</h1>
+<head>
+			<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"> <!-- file used for defining fonts colors etc... -->
 
-                <p id="demo">Incorrect Username and/or password.</p>
+<!-- Latest compiled and minified JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script> <!-- file used for using javascript  -->
+	</head>
+	<body>
+		<div class="container">
+		<h1>T5 Messenger</h1>
+		
+		<div class="alert alert-danger">
+		<p>Incorrect Username and/or password.</p>
+        <p>Please re-enter your Username and Password.</p>
+        </div>
 
-                <p id="demo">Please re-enter your Username and Password.</p>
-
-                <form name="input" action="login" method="post">
-					Username: <input type="text"     name="user">
-					Password: <input type="password" name="pwd">
-					<input type="submit" value="Login">         	
-                <form>
-        </body>
+		<form name="input" action="login" method="post" class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="inputEmail">Username</label>
+				<div class="col-sm-4"><input type="text" class="form-control" name="user" placeholder="Username"></div> <!-- format page to display the username entry -->
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="inputPwd">Password</label>
+				<div class="col-sm-4"><input type="password" class="form-control" name="pwd" placeholder="Password"></div> <!-- format page to display the password entry -->
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-11">
+					<input type="submit" class="btn btn-primary" value="Login"> <!-- format page to display the login button -->
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-11">
+					<p> If you don't have an account, you can <a href="registration">register here</a></p> <!-- format page to display text and button to registration-->
+				</div>
+			</div>
+		</form> 
+		
+		</div>
+	</body>
 </html>

@@ -12,16 +12,16 @@
 		<h1>T5 Messenger</h1>
 		
 		<div class="row">
-			<div class="col-xs-11 col-xs-offset-1">
+			<div class="col-sm-11 col-sm-offset-1">
 				<p>Welcome back {{user}}! <a href="logout">Logout</a> </p> <!-- format page to display username and logout button-->
 			</div>
 		</div>
 		
-		<div id="messages" style="height:200px;overflow-y:scroll;overflow-x: hidden;"> <!-- ??? -->	
+		<div id="messages" style="height:200px;overflow-y:scroll;overflow-x: hidden; margin-bottom:10px"> <!-- ??? -->	
 		</div>
 		
 		<div class="row">
-		<div class="col-sm-4 col-xs-offset-1">
+		<div class="col-sm-4">
 		<div class="input-group">
 			<input class="form-control" type="text" id="messageText" name="msg" placeholder="say something.."> <!-- format page to display box to enter text to chat -->
 			<span class="input-group-btn">
@@ -44,19 +44,18 @@
 		<script>
 			var socket = io.connect('http://localhost:8625'); //localhost is your port number
 			
-			$(document).ready(function() {
-    var bodyheight = $(document).height();
-    $("#messages").height(bodyheight-180);//format chat box to be the window height - x
-});
+			function resizeMessages() {
+				//format chat box to be the window height - x
+				$("#messages").height($(window).height() - 180);
+			}
+			
+			$(document).ready(resizeMessages);
 
-// for the window resize
-$(window).resize(function() {
-    var bodyheight = $(document).height();
-    $("#messages").height(bodyheight-180);
-});
+			// for the window resize
+			$(window).resize(resizeMessages);
 
 			$("#messageText").ready(function() {//function to (supposed to anyway...) send signal to send text to chat that is in text box
- 				$('form input').keydown(function(event){
+ 				$('#messageText').keydown(function(event){
     				if(event.keyCode == 13) {
      					sendMessage($("#messageText").val());
 						$("#messageText").val("");
@@ -69,22 +68,38 @@ $(window).resize(function() {
 				$("#messageText").val("");
 			});
 			
+			// Returns a string formatted as 'Month Day, Year'
+			function formatDate(date) {
+				var months = ["January","February","March","April","May","June","July","August","September","November","October","December"];
+				return months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
+			}
+			
+			var previousFormattedDate = "";
+			
 			function renderMessage(msg) {//function to render text on browser when you send and receive a message
 				var date = new Date(msg.time);
 				// hours part from the timestamp
 				var hours = date.getHours();
 				// minutes part from the timestamp
 				var minutes = date.getMinutes();
+				
+				var formattedDate = formatDate(date);
 
 				// will display time in 10:30 format
 				var formattedTime = hours + ':' + (minutes < 10? '0' + minutes : minutes);
-				var result;
-				result = '<div class="row"><div class="col-xs-1">';//render time to chat
-				result+='<b>'+formattedTime+'</b>';
-				result+='</div><div class="col-xs-11"><p>';
+				var result="";
+				// Render the date 
+				if(previousFormattedDate !== formattedDate) {
+					result+='<div class="row"><div class="col-sm-12"><h4><span class="label label-primary">'+formattedDate+'</span></h4></div></div>';
+					previousFormattedDate = formattedDate;
+				}
+				result+='<div class="row"><div class="col-sm-12">';//render time to chat
+				//result+='<img class="pull-left" src="img/businessman.png" alt="'+msg.sender+'" style="display:block;width:64px;height:64px;">';
+				result+='<p><b>'+formattedTime+'</b> ';
 				if(msg.sender) {
-					 result+='<b class="text-primary">'+msg.sender+'</b><br>';//render the user who sent the message
+					 result+='<b class="text-primary">'+msg.sender+'</b>';//render the user who sent the message
 				 }
+				result+='</p><p>';
 				result += msg.text+'</p></div></div>';//render text to chat
 				
 				$("#messages").append(result);

@@ -1,5 +1,5 @@
 
-var mysql = require('mysql');
+var mysql = require('mysql');//import sql module to state.js
 
 var array = [];
 var userID = 0;
@@ -14,7 +14,7 @@ exports.createDBManager = function() {
 
 
 function DBManager() {
-	this.dbConfig = {
+	this.dbConfig = {//settings for database
 		host: 'danu6.it.nuigalway.ie',
 		user: 'mydb1491i',
 		password: 'mydb1491i',
@@ -48,11 +48,11 @@ function DBManager() {
 	this.findMessageID();
 }
 
-DBManager.prototype.closeConnection = function() {
+DBManager.prototype.closeConnection = function() {//ends connection to db
 	this.connection.end();
 }
 
-DBManager.prototype.getAllUsers = function(callback) {
+DBManager.prototype.getAllUsers = function(callback) {//get all users
 	var queryString = 'SELECT * FROM User;';
 	this.connection.query(queryString, function(err, results, fields) {
 		if(err) throw err;
@@ -61,7 +61,7 @@ DBManager.prototype.getAllUsers = function(callback) {
 	});
 }
 
-DBManager.prototype.findUserID = function() {
+DBManager.prototype.findUserID = function() {//find user
 	var queryString = 'SELECT COUNT(*) AS Number FROM User;';
 	this.connection.query(queryString, function(err, results, fields) {
 		if(err) throw err;
@@ -71,7 +71,7 @@ DBManager.prototype.findUserID = function() {
 	});
 }
 
-DBManager.prototype.findMessageID = function() {
+DBManager.prototype.findMessageID = function() {//find message
 	var queryString = 'SELECT COUNT(*) AS Number FROM Messages;';
 	this.connection.query(queryString, function(err, results, fields) {
 		if(err) throw err;
@@ -95,7 +95,7 @@ DBManager.prototype.registerUser = function(username, password, callback) {
 			[userID, username, password], 
 			function(err, results, fields) {
 			if(err) throw err;
-			userID += 1;
+			userID += 1;//for future registers
 			callback(results);
 		});
 		
