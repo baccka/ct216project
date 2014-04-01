@@ -1,16 +1,42 @@
+<!DOCTYPE html>
 <html>
+	<head>
+			<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	</head>
 	<body>
+		<div class="container">
 		<h1>T5 Messenger</h1>
 		
-		<h1>Sorry, there is already a profile with that username.</h1>
-		<h1>Please enter a new username.</h1>
+		<div class="alert alert-danger">
+		<p>Sorry, there is already a profile with that username.</p>
+        <p>Please enter a new username.</p>
+        </div>
+		
+		<form name="input" action="register" method="post" class="form-horizontal" role="form">
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-11">
+					<p>Account registration form</p>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="inputEmail">Username</label>
+				<div class="col-sm-4"><input type="text" class="form-control" name="user" placeholder="Username"></div> <!-- format page to display the username entry -->
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="inputPwd">Password</label>
+				<div class="col-sm-4"><input type="password" class="form-control" name="pwd" placeholder="Password"></div> <!-- format page to display the password entry -->
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-11">
+					<input type="submit" class="btn btn-primary" value="Register"> <!-- format page to display the login button -->
+				</div>
+			</div>
+		</form> 
 
-		<p id="demo">Registeration Form</p>
-
-		<form name="input" action="register" method="post">
-			Username: <input type="text"     name="user">
-			Password: <input type="password" name="pwd">
-			<input type="submit" value="Submit">
-		</form>
+		</div>
 	</body>
 </html>

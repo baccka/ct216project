@@ -123,9 +123,30 @@ sio.set('authorization', function (data, callback) {
     });
 });
 
+var userList = {};
+
 sio.on('connection', function(client){
 	console.log('TEST>>> Client Connected...');
 	var session = client.handshake.session;
+	var finishedTypingTimer = null;
+	
+	// Mark that this user connected.
+	if(userList[session.user]) {
+		userList[session.user]++;
+	} else {
+		userList[session.user] = 1;
+		client.broadcast.emit('userConnected', {user: session.user});
+	}
+	
+	// Resets the timer which notifies the browsers that this client
+	// finished typing
+	function resetTypingTimer() {
+		if(finishedTypingTimer !== null) {
+			clearTimeout(finishedTypingTimer);
+			finishedTypingTimer = null;
+		}
+	}
+	
 	// send the message history
 	dbManager.getMessages(function(results) {
 		for(var i = 0; i < results.length; ++i) {
@@ -138,22 +159,48 @@ sio.on('connection', function(client){
 			})();
 		}
 	});
+	
+	// Send the list of users
+	var userArray = [];
+	for(var user in userList) {
+		userArray.push(user);
+	}
+	client.emit('userList', userArray);
+	
 	client.on('message', function (data) {//function to broadcast message and enter to db
 		console.log(data);
 		var timestamp = new Date();
 		var msg = {time: timestamp.getTime(), sender: session.user, text: data.text};
+		resetTypingTimer();
 		client.broadcast.emit('stoppedTyping', {user: session.user});
 		client.broadcast.emit('message', msg);
 		dbManager.addMessage({time: timestamp, senderID: session.userID, text: msg.text});
 	});
+	
 	client.on('disconnect', function() {//display user has disconnected
-		var msg = {time: new Date().getTime(), sender: null, text: session.user + ' disconnected!'};
-		client.broadcast.emit('message', msg);
+		resetTypingTimer();
+		client.broadcast.emit('stoppedTyping', {user: session.user});
+		
+		var connectedCount = userList[session.user];
+		connectedCount--;
+		if(connectedCount === 0) {
+			delete userList[session.user];
+			client.broadcast.emit('userDisconnected', {user: session.user});
+			var msg = {time: new Date().getTime(), sender: null, text: session.user + ' disconnected!'};
+			client.broadcast.emit('message', msg);
+		} else {
+			userList[session.user] = connectedCount;
+		}		
 	});
+	
 	client.on('typing', function() {
 		client.broadcast.emit('isTyping', {user: session.user});
-		/*setTimeout(function() {
+		resetTypingTimer();
+		
+		// Create a 5 second timer which will notify other browser that this
+		// client has finished typing
+		finishedTypingTimer = setTimeout(function() {
 			client.broadcast.emit('stoppedTyping', {user: session.user});
-		}, 5000);*/
+		}, 5000);
 	});
 });
