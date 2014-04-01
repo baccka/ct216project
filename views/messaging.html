@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"> <!-- file for font size, colors etc... -->
 
 	</head>
-	<body>
+	<body style="background-image: url('http://p1.pichost.me/i/8/1306719.jpg');">
 		<div class="container">
 		<h1>T5 Messenger</h1>
 		
@@ -25,7 +25,7 @@
 			</ul>
 		</div>
 		
-		<div id="messages" style="overflow-y:scroll;overflow-x:hidden; margin-bottom:10px;"> <!-- ??? -->	
+		<div id="messages" style="background-color: rgba(255, 255, 255, 0.5);border-radius:2px;overflow-y:scroll;overflow-x:hidden; margin-bottom:10px;"> <!-- ??? -->	
 		</div>
 		
 		 <div class="row" style="display:none;" id="typingBoxWrapper">
@@ -61,7 +61,7 @@
 			
 			function resizeMessages() {
 				//format chat box to be the window height - x
-				var height = $(window).height() - 180;
+				var height = $(window).height() - 210;
 				$("#messages").height(height);
 				$("#users").outerHeight(height);
 			}
@@ -116,8 +116,7 @@
 					result+='<div class="row"><div class="col-sm-12"><h4><span class="label label-primary">'+formattedDate+'</span></h4></div></div>';
 					previousFormattedDate = formattedDate;
 				}
-				result+='<div class="row"><div class="col-sm-12">';//render time to chat
-				//result+='<img class="pull-left" src="img/businessman.png" alt="'+msg.sender+'" style="display:block;width:64px;height:64px;">';
+				result+='<div class="row"><div class="col-sm-12">';//render time to chat 
 				result+='<p><b>'+formattedTime+'</b> ';
 				if(msg.sender) {
 					 result+='<b class="text-primary">'+msg.sender+'</b>';//render the user who sent the message
