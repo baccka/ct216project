@@ -30,12 +30,6 @@ app.get('/', function(request, response) {//function to be called at start of se
 	response.sendfile('./views/index.html');//return session to home page
 });
 
-app.on('request', function (req, res){
-    console.log('Dealing with a request...', req.method);
-	res.writeHead(200, {'Content-type': 'text/html'});
-	res.end(sockFile);
-});
-
 app.get('/users', function(request, response) {//function to show all users
 	dbManager.getAllUsers(function(result) {//call dbManager to return all names
 		response.render('users', {title:"Users", users: result });//render list of users
@@ -83,7 +77,7 @@ app.post('/login', express.bodyParser(), function(req, res) {//function to attem
 });
 
 var server = http.createServer(app);
-server.listen(8625);//serber port number
+server.listen(8625);//server port number
 
 // This is our websocket server
 
@@ -172,9 +166,9 @@ sio.on('connection', function(client){
 		var timestamp = new Date();
 		var msg = {time: timestamp.getTime(), sender: session.user, text: data.text};
 		resetTypingTimer();
-		client.broadcast.emit('stoppedTyping', {user: session.user});
-		client.broadcast.emit('message', msg);
-		dbManager.addMessage({time: timestamp, senderID: session.userID, text: msg.text});
+		client.broadcast.emit('stoppedTyping', {user: session.user});//stop typing icon
+		client.broadcast.emit('message', msg);//broadcast message
+		dbManager.addMessage({time: timestamp, senderID: session.userID, text: msg.text});//add to db
 	});
 	
 	client.on('disconnect', function() {//display user has disconnected
@@ -183,7 +177,7 @@ sio.on('connection', function(client){
 		
 		var connectedCount = userList[session.user];
 		connectedCount--;
-		if(connectedCount === 0) {
+		if(connectedCount === 0) {//if user has no connection to server remove him from online users
 			delete userList[session.user];
 			client.broadcast.emit('userDisconnected', {user: session.user});
 			var msg = {time: new Date().getTime(), sender: null, text: session.user + ' disconnected!'};
@@ -194,7 +188,7 @@ sio.on('connection', function(client){
 	});
 	
 	client.on('typing', function() {
-		client.broadcast.emit('isTyping', {user: session.user});
+		client.broadcast.emit('isTyping', {user: session.user});//broadcast to others that your typing
 		resetTypingTimer();
 		
 		// Create a 5 second timer which will notify other browser that this

@@ -3,11 +3,13 @@
 	<head>
 		<script type="text/javascript" src="js/socket.io.js"></script>
 		
-		<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"> <!-- file for font size, colors etc... -->
-
+	<!-- Bootstrap -->
+	<!-- minified CSS -->
+	<link rel="stylesheet" href="./css/bootstrap.min.css"> <!-- file used for defining fonts colors etc... -->
+	
 	</head>
-	<body style="background-image: url('http://p1.pichost.me/i/8/1306719.jpg');">
+	<!-- line to load background-->
+	<body style="background-image: url('./img/background.jpg');">
 		<div class="container">
 		<h1>T5 Messenger</h1>
 		
@@ -18,16 +20,18 @@
 			</div>
 		</div>
 		
+		<!-- format page to display the users online box -->
 		<div class="panel panel-default" id="users" style="overflow-y:auto;overflow-x:hidden;float:right; width: 200px;  margin-bottom:10px; margin-left:10px; ">
 			<div class="panel-heading">Who's online:</div>
 			<ul class="list-group" id="usersList">
 			  
 			</ul>
 		</div>
-		
-		<div id="messages" style="background-color: rgba(255, 255, 255, 0.5);border-radius:2px;overflow-y:scroll;overflow-x:hidden; margin-bottom:10px;"> <!-- ??? -->	
+		<!-- change transparency & colour of chat message box -->
+		<div id="messages" style="background-color: rgba(255, 255, 255, 0.5);border-radius:2px;overflow-y:scroll;overflow-x:hidden; margin-bottom:10px;">
 		</div>
 		
+		<!-- notification for when someone is typing -->
 		 <div class="row" style="display:none;" id="typingBoxWrapper">
             <div class="col-sm-12">
                 <div class=" well well-sm" style="overflow:hidden" id="typingBox">
@@ -71,10 +75,10 @@
 			// for the window resize
 			$(window).resize(resizeMessages);
 
-			$("#messageText").ready(function() {//function to (supposed to anyway...) send signal to send text to chat that is in text box
+			$("#messageText").ready(function() {//function to send signal to send text to chat that is in text box
  				$('#messageText').keydown(function(event){
-    				if(event.keyCode == 13) {
-     					sendMessage($("#messageText").val());
+    				if(event.keyCode == 13) {//keycode for enter
+     					sendMessage($("#messageText").val());//function to send message if enter key is used
 						$("#messageText").val("");
     				}
   				});
@@ -129,8 +133,8 @@
 			}
 			
 			function sendMessage(msg) {
-				socket.emit('message', {text: msg});
-				renderMessage({time: new Date().getTime(), sender: '{{user}}', text: msg});//function to send message to chat
+				socket.emit('message', {text: msg});//send to server
+				renderMessage({time: new Date().getTime(), sender: '{{user}}', text: msg});//function to render message to chat
 			}
 			
 
@@ -143,30 +147,30 @@
     		function renderUsersList() {
 				var result = '';
 				for(var user in userList){
-					result += '<li class="list-group-item" style="border:none;"><b class="text-primary">'+user+'</b></li>';
+					result += '<li class="list-group-item" style="border:none;"><b class="text-primary">'+user+'</b></li>';//get all online users
 				}
-				console.log(result);
+				console.log(result);//render all online users
 				$("#usersList").html(result);
 			}
 			
 			socket.on('userList', function(data) {
 				console.log(data);
 				for(var i = 0; i < data.length; ++i) {
-					userList[data[i]] = true;
+					userList[data[i]] = true;//
 				}
 				renderUsersList();
 			});
 			
 			socket.on('userConnected', function(data) {
 				if(data.user) {
-					userList[data.user] = true;
+					userList[data.user] = true;//when user connects add user to userList
 				}
 				renderUsersList();
 			});
 			
 			socket.on('userDisconnected', function(data) {
 				if(data.user && userList[data.user]) {
-					delete userList[data.user];
+					delete userList[data.user];//remove username when user disconnects
 				}
 				renderUsersList();
 			});
